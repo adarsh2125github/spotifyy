@@ -26,10 +26,80 @@ let shuffleOrder  = [];
 let isDragging    = false;
 let apiBase       = 'http://127.0.0.1:8000';
 
-/* ── AUDIO ──────────────────────────────────────────────────── */
-const audio = new Audio();
-audio.volume = 0.7;
-// audio.crossOrigin = 'anonymous'; // disabled to avoid CORS policies when playing raw audio streams
+/* ── YOUTUBE PLAYER ─────────────────────────────────────────── */
+let ytPlayer = null;
+let ytPlayerReady = false;
+let progressInterval = null;
+
+// Load YouTube Iframe API dynamically
+const tag = document.createElement('script');
+tag.src = "https://www.youtube.com/iframe_api";
+const firstScriptTag = document.getElementsByTagName('script')[0];
+firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+window.onYouTubeIframeAPIReady = function() {
+  ytPlayer = new YT.Player('yt-player', {
+    height: '1',
+    width: '1',
+    videoId: '',
+    playerVars: {
+      'playsinline': 1,
+      'controls': 0,
+      'disablekb': 1,
+      'fs': 0,
+      'rel': 0,
+      'showinfo': 0,
+      'iv_load_policy': 3
+    },
+    events: {
+      'onReady': onPlayerReady,
+      'onStateChange': onPlayerStateChange,
+      'onError': onPlayerError
+    }
+  });
+};
+
+function onPlayerReady(event) {
+  ytPlayerReady = true;
+  ytPlayer.setVolume(70);
+}
+
+function onPlayerStateChange(event) {
+  if (event.data === YT.PlayerState.PLAYING) {
+    isPlaying = true;
+    updatePlayPauseIcon();
+    el.npBar.classList.add('is-playing');
+    updateActiveSongHighlight();
+    
+    clearInterval(progressInterval);
+    progressInterval = setInterval(updateProgress, 500);
+  } else if (event.data === YT.PlayerState.PAUSED) {
+    isPlaying = false;
+    updatePlayPauseIcon();
+    el.npBar.classList.remove('is-playing');
+    updateActiveSongHighlight();
+    clearInterval(progressInterval);
+  } else if (event.data === YT.PlayerState.ENDED) {
+    isPlaying = false;
+    updatePlayPauseIcon();
+    el.npBar.classList.remove('is-playing');
+    updateActiveSongHighlight();
+    clearInterval(progressInterval);
+    
+    if (repeatMode === 2) {
+      ytPlayer.seekTo(0, true);
+      ytPlayer.playVideo();
+    } else {
+      playNext();
+    }
+  }
+}
+
+function onPlayerError(event) {
+  showToast('⚠ Could not load audio. Skipping…');
+  clearInterval(progressInterval);
+  setTimeout(playNext, 1500);
+}
 
 /* ── DOM REFS ───────────────────────────────────────────────── */
 const $  = id => document.getElementById(id);
@@ -180,9 +250,10 @@ function playSong(idx) {
   currentIndex = idx;
   const song   = songs[idx];
 
-  audio.src = song.audio;
-  audio.load();
-  audio.play().catch(() => showToast('Click play to start (browser policy)'));
+  if (ytPlayer && ytPlayerReady) {
+    ytPlayer.loadVideoById(song.id);
+    ytPlayer.playVideo();
+  }
 
   updateNowPlayingUI(song);
   renderBanner(song);
@@ -190,10 +261,13 @@ function playSong(idx) {
 
 function togglePlay() {
   if (currentIndex === -1) { playSong(0); return; }
-  if (!audio.paused) {
-    audio.pause();
+  if (!ytPlayer || !ytPlayerReady) return;
+  
+  const state = ytPlayer.getPlayerState();
+  if (state === YT.PlayerState.PLAYING) {
+    ytPlayer.pauseVideo();
   } else {
-    audio.play().catch(() => showToast('Click play to start (browser policy)'));
+    ytPlayer.playVideo();
   }
 }
 
@@ -211,7 +285,12 @@ function playNext() {
 }
 
 function playPrev() {
-  if (audio.currentTime > 3) { audio.currentTime = 0; return; }
+  if (!ytPlayer || !ytPlayerReady) return;
+  const currentTime = ytPlayer.getCurrentTime();
+  if (currentTime > 3) {
+    ytPlayer.seekTo(0, true);
+    return;
+  }
   const prev = (currentIndex - 1 + songs.length) % songs.length;
   playSong(prev);
 }
@@ -253,11 +332,16 @@ function updateActiveSongHighlight() {
 
 /* ── PROGRESS ───────────────────────────────────────────────── */
 function updateProgress() {
-  if (!audio.duration || isDragging) return;
-  const pct = (audio.currentTime / audio.duration) * 100;
+  if (!ytPlayer || !ytPlayerReady || isDragging) return;
+  const currentTime = ytPlayer.getCurrentTime();
+  const duration = ytPlayer.getDuration();
+  if (!duration) return;
+  
+  const pct = (currentTime / duration) * 100;
   el.npFill.style.width   = pct + '%';
   el.npThumb.style.left   = `calc(${pct}% - 6px)`;
-  el.npCurrentTime.textContent = fmtTime(audio.currentTime);
+  el.npCurrentTime.textContent = fmtTime(currentTime);
+  el.npTotalTime.textContent = fmtTime(duration);
 }
 
 function fmtTime(s) {
@@ -268,24 +352,34 @@ function fmtTime(s) {
 }
 
 function seekTo(e) {
+  if (!ytPlayer || !ytPlayerReady) return;
   const rect = el.npProgress.getBoundingClientRect();
   const pct  = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-  if (audio.duration) {
-    audio.currentTime = pct * audio.duration;
+  const duration = ytPlayer.getDuration();
+  if (duration) {
+    ytPlayer.seekTo(pct * duration, true);
     el.npFill.style.width = (pct * 100) + '%';
   }
 }
 
 /* ── VOLUME ─────────────────────────────────────────────────── */
 function setVolume(val) {
-  audio.volume = val / 100;
-  audio.muted  = false;
+  if (ytPlayer && ytPlayerReady) {
+    ytPlayer.setVolume(val);
+    ytPlayer.unMute();
+  }
   el.volSlider.style.setProperty('--vol', val + '%');
 }
 
 function toggleMute() {
-  audio.muted = !audio.muted;
-  el.btnMute.classList.toggle('active', audio.muted);
+  if (!ytPlayer || !ytPlayerReady) return;
+  if (ytPlayer.isMuted()) {
+    ytPlayer.unMute();
+    el.btnMute.classList.remove('active');
+  } else {
+    ytPlayer.mute();
+    el.btnMute.classList.add('active');
+  }
 }
 
 let searchTimeout = null;
@@ -423,47 +517,17 @@ function bindEvents() {
   document.addEventListener('keydown', e => {
     const tag = e.target.tagName;
     if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+    if (!ytPlayer || !ytPlayerReady) return;
     switch (e.code) {
       case 'Space':       e.preventDefault(); togglePlay(); break;
-      case 'ArrowRight':  audio.currentTime = Math.min(audio.duration || 0, audio.currentTime + 5); break;
-      case 'ArrowLeft':   audio.currentTime = Math.max(0, audio.currentTime - 5); break;
+      case 'ArrowRight':  ytPlayer.seekTo(Math.min(ytPlayer.getDuration() || 0, ytPlayer.getCurrentTime() + 5), true); break;
+      case 'ArrowLeft':   ytPlayer.seekTo(Math.max(0, ytPlayer.getCurrentTime() - 5), true); break;
       case 'ArrowUp':     el.volSlider.value = Math.min(100, parseInt(el.volSlider.value) + 5); setVolume(parseInt(el.volSlider.value)); break;
       case 'ArrowDown':   el.volSlider.value = Math.max(0,   parseInt(el.volSlider.value) - 5); setVolume(parseInt(el.volSlider.value)); break;
       case 'KeyN':        playNext(); break;
       case 'KeyP':        playPrev(); break;
       case 'KeyM':        toggleMute(); break;
     }
-  });
-
-  /* Audio events */
-  audio.addEventListener('timeupdate', updateProgress);
-
-  audio.addEventListener('loadedmetadata', () => {
-    el.npTotalTime.textContent = fmtTime(audio.duration);
-  });
-
-  audio.addEventListener('ended', () => {
-    if (repeatMode === 2) { audio.currentTime = 0; audio.play(); }
-    else { playNext(); }
-  });
-
-  audio.addEventListener('play',  () => {
-    isPlaying = true;
-    updatePlayPauseIcon();
-    el.npBar.classList.add('is-playing');
-    updateActiveSongHighlight();
-  });
-
-  audio.addEventListener('pause', () => {
-    isPlaying = false;
-    updatePlayPauseIcon();
-    el.npBar.classList.remove('is-playing');
-    updateActiveSongHighlight();
-  });
-
-  audio.addEventListener('error', () => {
-    showToast('⚠ Could not load audio. Skipping…');
-    setTimeout(playNext, 1500);
   });
 
   /* Volume slider CSS track fill */
