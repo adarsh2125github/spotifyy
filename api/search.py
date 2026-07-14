@@ -59,7 +59,7 @@ class handler(BaseHTTPRequestHandler):
             }
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                 try:
-                    search_results = ydl.extract_info(f"ytsearch10:{q}", download=False)
+                    search_results = ydl.extract_info(f"ytsearch5:{q} lyrics", download=False)
                     if 'entries' in search_results:
                         for entry in search_results['entries']:
                             results.append(map_youtube_entry(entry))

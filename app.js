@@ -2,16 +2,16 @@
 
 /* ── SONG DATA ─────────────────────────────────────────────── */
 const SONGS = [
-  { id: 'u6b8OPOfTnk', title: 'Blinding Lights', artist: 'The Weeknd', album: 'After Hours', genre: 'Synth-pop', year: 2020, cover: 'https://i.ytimg.com/vi/J7_1Ut1y1GY/hqdefault.jpg', audio: '/api/stream?id=u6b8OPOfTnk', color: '#0d1b4b', duration: '3:21', durationSecs: 201 },
-  { id: 'K5y2N0jZg8k', title: 'Shape of You', artist: 'Ed Sheeran', album: '÷ (Divide)', genre: 'Pop', year: 2017, cover: 'https://i.ytimg.com/vi/_dK2tDK9grQ/hqdefault.jpg', audio: '/api/stream?id=K5y2N0jZg8k', color: '#1a0a40', duration: '3:53', durationSecs: 233 },
-  { id: 'gOsM-DYAEhY', title: 'Believer', artist: 'Imagine Dragons', album: 'Evolve', genre: 'Alt-rock', year: 2017, cover: 'https://i.ytimg.com/vi/i31OX0v5Hoo/hqdefault.jpg', audio: '/api/stream?id=gOsM-DYAEhY', color: '#0a2010', duration: '3:24', durationSecs: 204 },
-  { id: 'AnMYEee45dM', title: 'Stay', artist: 'The Kid LAROI & Justin Bieber', album: 'F*CK LOVE 3: OVER YOU', genre: 'Pop-rock', year: 2021, cover: 'https://i.ytimg.com/vi/yS7c2Z1S-jE/hqdefault.jpg', audio: '/api/stream?id=AnMYEee45dM', color: '#3a0a20', duration: '2:21', durationSecs: 141 },
-  { id: '34Na4j8AVgA', title: 'Starboy', artist: 'The Weeknd ft. Daft Punk', album: 'Starboy', genre: 'R&B/Electronic', year: 2016, cover: 'https://i.ytimg.com/vi/d8oLCh_9tH8/hqdefault.jpg', audio: '/api/stream?id=34Na4j8AVgA', color: '#0a1a3e', duration: '3:50', durationSecs: 230 },
-  { id: 'H5v3kku4y6Q', title: 'As It Was', artist: 'Harry Styles', album: "Harry's House", genre: 'Indie-pop', year: 2022, cover: 'https://i.ytimg.com/vi/fN4D33-qR8g/hqdefault.jpg', audio: '/api/stream?id=H5v3kku4y6Q', color: '#3a1a00', duration: '2:47', durationSecs: 167 },
-  { id: 'a1yDcs95m84', title: 'Flowers', artist: 'Miley Cyrus', album: 'Endless Summer Vacation', genre: 'Pop', year: 2023, cover: 'https://i.ytimg.com/vi/G7KNUPfq44g/hqdefault.jpg', audio: '/api/stream?id=a1yDcs95m84', color: '#3a2800', duration: '3:20', durationSecs: 200 },
-  { id: '817P8W8-mGE', title: 'Perfect', artist: 'Ed Sheeran', album: '÷ (Divide)', genre: 'Pop', year: 2017, cover: 'https://i.ytimg.com/vi/2Vv-BfVoq4g/hqdefault.jpg', audio: '/api/stream?id=817P8W8-mGE', color: '#0a0a20', duration: '4:23', durationSecs: 263 },
-  { id: '0zGcUoRlhmw', title: 'Closer', artist: 'The Chainsmokers ft. Halsey', album: 'Collage', genre: 'EDM/Pop', year: 2016, cover: 'https://i.ytimg.com/vi/t2G8e8VzL5U/hqdefault.jpg', audio: '/api/stream?id=0zGcUoRlhmw', color: '#2e1800', duration: '4:05', durationSecs: 245 },
-  { id: 'DyDfgMOUHC8', title: 'Bad Guy', artist: 'Billie Eilish', album: 'When We All Fall Asleep, Where Do We Go?', genre: 'Electropop', year: 2019, cover: 'https://i.ytimg.com/vi/YuRPkf9h5uM/hqdefault.jpg', audio: '/api/stream?id=DyDfgMOUHC8', color: '#003030', duration: '3:14', durationSecs: 194 }
+  { id: 'u6b8OPOfTnk', title: 'Blinding Lights', artist: 'The Weeknd', album: 'After Hours', genre: 'Synth-pop', year: 2020, cover: 'https://i.scdn.co/image/ab67616d0000b273b526d17e57c6b541fc112678', audio: '/api/stream?id=u6b8OPOfTnk', color: '#0d1b4b', duration: '3:21', durationSecs: 201 },
+  { id: 'K5y2N0jZg8k', title: 'Shape of You', artist: 'Ed Sheeran', album: '÷ (Divide)', genre: 'Pop', year: 2017, cover: 'https://i.scdn.co/image/ab67616d0000b273ba5db46f4b83884b268a0c5c', audio: '/api/stream?id=K5y2N0jZg8k', color: '#1a0a40', duration: '3:53', durationSecs: 233 },
+  { id: 'gOsM-DYAEhY', title: 'Believer', artist: 'Imagine Dragons', album: 'Evolve', genre: 'Alt-rock', year: 2017, cover: 'https://i.scdn.co/image/ab67616d0000b2735f1fda6f9cf50c37747e9238', audio: '/api/stream?id=gOsM-DYAEhY', color: '#0a2010', duration: '3:24', durationSecs: 204 },
+  { id: 'AnMYEee45dM', title: 'Stay', artist: 'The Kid LAROI & Justin Bieber', album: 'F*CK LOVE 3: OVER YOU', genre: 'Pop-rock', year: 2021, cover: 'https://i.scdn.co/image/ab67616d0000b27341e31d6eaadb0d06115b3769', audio: '/api/stream?id=AnMYEee45dM', color: '#3a0a20', duration: '2:21', durationSecs: 141 },
+  { id: '34Na4j8AVgA', title: 'Starboy', artist: 'The Weeknd ft. Daft Punk', album: 'Starboy', genre: 'R&B/Electronic', year: 2016, cover: 'https://i.scdn.co/image/ab67616d0000b2734718dec6954e110b45b0685d', audio: '/api/stream?id=34Na4j8AVgA', color: '#0a1a3e', duration: '3:50', durationSecs: 230 },
+  { id: 'H5v3kku4y6Q', title: 'As It Was', artist: 'Harry Styles', album: "Harry's House", genre: 'Indie-pop', year: 2022, cover: 'https://i.scdn.co/image/ab67616d0000b273b4695c5b9f71c4c1a797c276', audio: '/api/stream?id=H5v3kku4y6Q', color: '#3a1a00', duration: '2:47', durationSecs: 167 },
+  { id: 'a1yDcs95m84', title: 'Flowers', artist: 'Miley Cyrus', album: 'Endless Summer Vacation', genre: 'Pop', year: 2023, cover: 'https://i.scdn.co/image/ab67616d0000b273f429549123d6a3f4ae29da60', audio: '/api/stream?id=a1yDcs95m84', color: '#3a2800', duration: '3:20', durationSecs: 200 },
+  { id: '817P8W8-mGE', title: 'Perfect', artist: 'Ed Sheeran', album: '÷ (Divide)', genre: 'Pop', year: 2017, cover: 'https://i.scdn.co/image/ab67616d0000b273ba5db46f4b83884b268a0c5c', audio: '/api/stream?id=817P8W8-mGE', color: '#0a0a20', duration: '4:23', durationSecs: 263 },
+  { id: '0zGcUoRlhmw', title: 'Closer', artist: 'The Chainsmokers ft. Halsey', album: 'Collage', genre: 'EDM/Pop', year: 2016, cover: 'https://i.scdn.co/image/ab67616d0000b2732ce2ab8b49e29a997abf064b', audio: '/api/stream?id=0zGcUoRlhmw', color: '#2e1800', duration: '4:05', durationSecs: 245 },
+  { id: 'DyDfgMOUHC8', title: 'Bad Guy', artist: 'Billie Eilish', album: 'When We All Fall Asleep, Where Do We Go?', genre: 'Electropop', year: 2019, cover: 'https://i.scdn.co/image/ab67616d0000b27350aae1c3905cfaf57b1f558a', audio: '/api/stream?id=DyDfgMOUHC8', color: '#003030', duration: '3:14', durationSecs: 194 }
 ];
 
 /* ── STATE ──────────────────────────────────────────────────── */
@@ -204,7 +204,7 @@ function renderQuickPicks(list) {
   el.quickGrid.innerHTML = list.map((s, i) => `
     <div class="song-card ${currentIndex === songs.indexOf(s) ? 'active' : ''}"
          data-idx="${songs.indexOf(s)}" id="card-${s.id}">
-      <img class="song-card-cover" src="${s.cover}" alt="${s.title}" loading="lazy" />
+      <img class="song-card-cover" src="${s.cover}" alt="${s.title}" loading="lazy" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'150\' height=\'150\' viewBox=\'0 0 24 24\' fill=\'%23535353\'><rect width=\'24\' height=\'24\' fill=\'%23282828\'/><path d=\'M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z\'/></svg>';" />
       <button class="card-play-btn" data-idx="${songs.indexOf(s)}" title="Play ${s.title}">
         <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
       </button>
@@ -231,7 +231,7 @@ function renderSongList(list) {
         </span>
       </div>
       <div class="row-info">
-        <img class="row-thumb" src="${s.cover}" alt="${s.title}" loading="lazy" />
+        <img class="row-thumb" src="${s.cover}" alt="${s.title}" loading="lazy" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'40\' height=\'40\' viewBox=\'0 0 24 24\' fill=\'%23535353\'><rect width=\'24\' height=\'24\' fill=\'%23282828\'/><path d=\'M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z\'/></svg>';" />
         <div class="row-text">
           <div class="row-title">${s.title}</div>
           <div class="row-artist">${s.artist}</div>
@@ -386,13 +386,27 @@ let searchTimeout = null;
 
 async function handleSearch(q) {
   const query = q.trim();
+  const banner = el.bannerTitle.closest('.featured-banner');
+  const quickPicks = el.quickGrid.closest('.content-section');
+  const allSongsTitle = document.querySelector('#sectionAllSongs .section-title');
+
   if (!query) {
     clearTimeout(searchTimeout);
     songs = [...trendingSongs];
     renderSongList(songs);
     renderQuickPicks(songs.slice(0, 6));
+    
+    // Restore home view
+    if (banner) banner.style.display = 'flex';
+    if (quickPicks) quickPicks.style.display = 'block';
+    if (allSongsTitle) allSongsTitle.textContent = 'All Songs';
     return;
   }
+
+  // Hide banner and quick picks to show only search results
+  if (banner) banner.style.display = 'none';
+  if (quickPicks) quickPicks.style.display = 'none';
+  if (allSongsTitle) allSongsTitle.textContent = `Search results for "${query}"`;
 
   clearTimeout(searchTimeout);
   searchTimeout = setTimeout(async () => {
@@ -404,7 +418,7 @@ async function handleSearch(q) {
         songs = data.songs.map(mapAudioUrl);
         renderSongList(songs);
       } else {
-        el.songList.innerHTML = `<div style="padding: 20px; color: #b3b3b3; text-align: center;">No results found for "${query}"</div>`;
+        el.songList.innerHTML = `<div style="padding: 40px; color: #b3b3b3; text-align: center; font-size: 1rem;">No results found for "${query}"</div>`;
       }
     } catch (err) {
       const filtered = trendingSongs.filter(s =>
