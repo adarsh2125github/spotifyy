@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spotifyy — Music for Everyone</title>
+  <meta name="description" content="Play millions of songs ad-free with Spotifyy, your premium music streaming experience." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Circular+Std:wght@400;500;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app">
+
+    <!-- ── SIDEBAR ── -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-logo">
+        <svg class="logo-icon" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="12" fill="#1DB954"/>
+          <path d="M17.5 10.5c-3.2-1.9-8.4-2.1-11.5-.6-.5.2-1-.1-1.2-.6-.2-.5.1-1 .6-1.2 3.5-1.7 9.4-1.4 13.1.7.4.3.6.8.3 1.3-.3.4-.9.6-1.3.4zm-.2 3c-.3.4-.7.5-1.1.3-2.7-1.7-6.8-2.2-9.9-1.2-.4.1-.9-.1-1-.5-.1-.4.1-.9.5-1 3.5-1.1 8-.5 11 1.4.4.2.5.7.5 1zm-1.3 2.9c-.2.3-.6.4-.9.2-2.3-1.4-5.3-1.7-8.7-.9-.3.1-.7-.1-.8-.5-.1-.3.1-.7.5-.8 3.8-.9 7-.5 9.6 1 .3.2.4.7.3 1z" fill="white"/>
+        </svg>
+        <span class="logo-text">Spotifyy</span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="#" class="nav-item active" id="navHome">
+          <svg viewBox="0 0 24 24"><path d="M12 3L2 12h3v9h6v-6h2v6h6v-9h3z"/></svg>
+          <span>Home</span>
+        </a>
+        <a href="#" class="nav-item" id="navSearch">
+          <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+          <span>Search</span>
+        </a>
+        <a href="#" class="nav-item" id="navLibrary">
+          <svg viewBox="0 0 24 24"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9H9V9h10v2zm-4 4H9v-2h6v2zm4-8H9V5h10v2z"/></svg>
+          <span>Your Library</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-section">
+        <button class="sidebar-action-btn" id="btnCreatePlaylist">
+          <span class="icon-box">+</span> Create Playlist
+        </button>
+        <button class="sidebar-action-btn" id="btnLikedSongs">
+          <span class="icon-box heart">♥</span> Liked Songs
+        </button>
+      </div>
+
+      <div class="sidebar-divider"></div>
+
+      <div class="sidebar-playlists" id="sidebarPlaylists">
+        <p class="playlist-item">Chill Mix</p>
+        <p class="playlist-item">Workout Beats</p>
+        <p class="playlist-item">Late Night Vibes</p>
+        <p class="playlist-item">Road Trip</p>
+        <p class="playlist-item">Focus Mode</p>
+      </div>
+    </aside>
+
+    <!-- ── MAIN CONTENT ── -->
+    <main class="main" id="mainContent">
+
+      <!-- Top Bar -->
+      <header class="topbar" id="topbar">
+        <div class="topbar-nav">
+          <button class="topbar-btn" id="btnBack" title="Back">&#8249;</button>
+          <button class="topbar-btn" id="btnForward" title="Forward">&#8250;</button>
+        </div>
+        <div class="topbar-search" id="searchBox">
+          <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+          <input type="text" placeholder="What do you want to listen to?" id="searchInput" />
+        </div>
+        <div class="topbar-user">
+          <button class="user-avatar" id="btnUser" title="Profile">S</button>
+        </div>
+      </header>
+
+      <!-- Scrollable Page -->
+      <div class="page-scroll" id="pageScroll">
+
+        <!-- Featured Banner -->
+        <section class="featured-banner" id="featuredBanner">
+          <div class="banner-bg" id="bannerBg"></div>
+          <div class="banner-content">
+            <span class="banner-tag">🎵 Featured</span>
+            <h1 class="banner-title" id="bannerTitle">Electric Dreams</h1>
+            <p class="banner-artist" id="bannerArtist">Luna Echo · Neon Horizon · 2024</p>
+            <div class="banner-actions">
+              <button class="btn-play-large" id="btnBannerPlay">
+                <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                Play
+              </button>
+              <button class="btn-follow">Follow</button>
+            </div>
+          </div>
+          <div class="banner-cover-wrap">
+            <img class="banner-cover" id="bannerCover" src="" alt="Featured Album" />
+          </div>
+        </section>
+
+        <!-- Quick Picks -->
+        <section class="content-section" id="sectionQuickPicks">
+          <div class="section-header">
+            <h2 class="section-title">Good picks for you</h2>
+            <a href="#" class="see-all">Show all</a>
+          </div>
+          <div class="quick-picks-grid" id="quickPicksGrid"></div>
+        </section>
+
+        <!-- All Songs -->
+        <section class="content-section" id="sectionAllSongs">
+          <div class="section-header">
+            <h2 class="section-title">All Songs</h2>
+            <a href="#" class="see-all" id="shuffleAllBtn">Shuffle</a>
+          </div>
+          <!-- Song List Table -->
+          <div class="song-table">
+            <div class="song-table-header">
+              <span class="col-num">#</span>
+              <span class="col-title">Title</span>
+              <span class="col-album">Album</span>
+              <span class="col-genre">Genre</span>
+              <span class="col-dur">
+                <svg viewBox="0 0 24 24" width="16" height="16"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z" fill="currentColor"/></svg>
+              </span>
+            </div>
+            <div id="songList"></div>
+          </div>
+        </section>
+
+      </div><!-- /page-scroll -->
+    </main>
+  </div><!-- /app -->
+
+  <!-- ── NOW PLAYING BAR ── -->
+  <footer class="now-playing-bar" id="nowPlayingBar">
+    <!-- Left: Song info -->
+    <div class="np-left">
+      <div class="np-cover-wrap">
+        <img class="np-cover" id="npCover" src="https://picsum.photos/seed/default/56/56" alt="Now Playing" />
+        <div class="np-cover-overlay">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" fill="white"/></svg>
+        </div>
+      </div>
+      <div class="np-info">
+        <div class="np-title" id="npTitle">Select a song</div>
+        <div class="np-artist" id="npArtist">—</div>
+      </div>
+      <button class="np-like" id="npLike" title="Like">
+        <svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="currentColor"/></svg>
+      </button>
+    </div>
+
+    <!-- Center: Controls + Progress -->
+    <div class="np-center">
+      <div class="np-controls">
+        <button class="ctrl-btn" id="btnShuffle" title="Shuffle">
+          <svg viewBox="0 0 24 24" width="18" height="18"><path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z" fill="currentColor"/></svg>
+        </button>
+        <button class="ctrl-btn" id="btnPrev" title="Previous">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" fill="currentColor"/></svg>
+        </button>
+        <button class="ctrl-btn play-btn" id="btnPlayPause" title="Play">
+          <svg class="icon-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>
+          <svg class="icon-pause" viewBox="0 0 24 24" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" fill="currentColor"/></svg>
+        </button>
+        <button class="ctrl-btn" id="btnNext" title="Next">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" fill="currentColor"/></svg>
+        </button>
+        <button class="ctrl-btn" id="btnRepeat" title="Repeat">
+          <svg viewBox="0 0 24 24" width="18" height="18"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z" fill="currentColor"/></svg>
+        </button>
+      </div>
+      <div class="np-progress-wrap">
+        <span class="np-time" id="npCurrentTime">0:00</span>
+        <div class="np-progress" id="npProgress">
+          <div class="np-progress-fill" id="npProgressFill"></div>
+          <div class="np-progress-thumb" id="npProgressThumb"></div>
+        </div>
+        <span class="np-time" id="npTotalTime">0:00</span>
+      </div>
+    </div>
+
+    <!-- Right: Volume -->
+    <div class="np-right">
+      <div class="np-equalizer" id="npEqualizer">
+        <span></span><span></span><span></span><span></span>
+      </div>
+      <button class="ctrl-btn sm" id="btnMute" title="Mute">
+        <svg class="icon-vol" viewBox="0 0 24 24" width="18" height="18"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" fill="currentColor"/></svg>
+      </button>
+      <div class="volume-slider-wrap">
+        <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="70" />
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
