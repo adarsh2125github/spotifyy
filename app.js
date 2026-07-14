@@ -96,7 +96,7 @@ function onPlayerStateChange(event) {
 }
 
 function onPlayerError(event) {
-  showToast('⚠ Could not load audio. Skipping…');
+  showToast(`⚠ Could not load audio (Error Code: ${event.data}). Skipping…`);
   clearInterval(progressInterval);
   setTimeout(playNext, 1500);
 }
