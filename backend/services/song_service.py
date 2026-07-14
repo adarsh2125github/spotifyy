@@ -145,6 +145,8 @@ def map_youtube_entry(entry):
     
     title = entry.get('title', 'Unknown Title')
     uploader = entry.get('uploader', 'Unknown Artist')
+    artist = entry.get('artist') or uploader
+    album = entry.get('album') or f"{artist} Single"
     
     # Hash title to get a consistent background color
     colors = ['#0d1b4b', '#1a0a40', '#0a2010', '#3a0a20', '#0a1a3e', '#3a1a00', '#3a2800', '#0a0a20', '#2e1800', '#003030']
@@ -156,8 +158,8 @@ def map_youtube_entry(entry):
     return {
         "id": video_id,
         "title": title,
-        "artist": uploader,
-        "album": "YouTube Release",
+        "artist": artist,
+        "album": album,
         "genre": "Music",
         "year": 2026,
         "cover": thumbnail,
