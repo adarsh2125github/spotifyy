@@ -24,7 +24,7 @@ let repeatMode    = 0;   // 0=off 1=all 2=one
 let likedSongs    = new Set();
 let shuffleOrder  = [];
 let isDragging    = false;
-let apiBase       = '';
+let apiBase       = 'http://127.0.0.1:8000';
 
 /* ── AUDIO ──────────────────────────────────────────────────── */
 const audio = new Audio();
@@ -91,11 +91,11 @@ async function tryFetchFromAPI() {
     }
   } catch (_) {
     try {
-      const res  = await fetch('http://localhost:8000/api/songs');
+      const res  = await fetch('http://127.0.0.1:8000/api/songs');
       if (!res.ok) throw new Error();
       const data = await res.json();
       if (data.songs && data.songs.length) {
-        apiBase = 'http://localhost:8000';
+        apiBase = 'http://127.0.0.1:8000';
         songs = data.songs.map(mapAudioUrl);
         trendingSongs = [...songs];
         renderQuickPicks(songs.slice(0, 6));
@@ -103,7 +103,7 @@ async function tryFetchFromAPI() {
         renderBanner(songs[0]);
       }
     } catch (err) {
-      apiBase = '';
+      apiBase = 'http://127.0.0.1:8000';
       songs = SONGS.map(mapAudioUrl);
       trendingSongs = [...songs];
       renderQuickPicks(songs.slice(0, 6));
