@@ -2,20 +2,21 @@
 
 /* ── SONG DATA ─────────────────────────────────────────────── */
 const SONGS = [
-  { id:1,  title:'Electric Dreams',  artist:'Luna Echo',            album:'Neon Horizon',   genre:'Electronic',     year:2024, cover:'https://picsum.photos/seed/elec1/300/300',  audio:'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',  color:'#0d1b4b' },
-  { id:2,  title:'Midnight Groove',  artist:'The Jazz Collective',  album:'Blue Hour',       genre:'Jazz',           year:2024, cover:'https://picsum.photos/seed/jazz2/300/300',  audio:'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',  color:'#1a0a40' },
-  { id:3,  title:'Urban Pulse',      artist:'Metro Beats',          album:'City Lights',     genre:'Hip Hop',        year:2024, cover:'https://picsum.photos/seed/urb3/300/300',   audio:'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',  color:'#0a2010' },
-  { id:4,  title:'Neon Lights',      artist:'Synthwave Republic',   album:'Retro Future',    genre:'Synthwave',      year:2024, cover:'https://picsum.photos/seed/neon4/300/300',  audio:'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3',  color:'#3a0a20' },
-  { id:5,  title:'Deep Blue Ocean',  artist:'Ambient Soul',         album:'Depths',          genre:'Ambient',        year:2024, cover:'https://picsum.photos/seed/ocean5/300/300', audio:'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3',  color:'#0a1a3e' },
-  { id:6,  title:'Fire Dance',       artist:'Salsa Moderna',        album:'Caliente',        genre:'Latin',          year:2024, cover:'https://picsum.photos/seed/fire6/300/300',  audio:'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3',  color:'#3a1a00' },
-  { id:7,  title:'Rising Sun',       artist:'Orchestral Dreams',    album:'Epic Canvas',     genre:'Orchestral',     year:2024, cover:'https://picsum.photos/seed/sun7/300/300',   audio:'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3',  color:'#3a2800' },
-  { id:8,  title:'Shadow Run',       artist:'Dark Matter',          album:'Void',            genre:'Dark Electronic',year:2024, cover:'https://picsum.photos/seed/shad8/300/300',  audio:'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3',  color:'#0a0a20' },
-  { id:9,  title:'Golden Era',       artist:'Retro Vibes',          album:'Throwback',       genre:'R&B',            year:2024, cover:'https://picsum.photos/seed/gold9/300/300',  audio:'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3',  color:'#2e1800' },
-  { id:10, title:'Crystal Clear',    artist:'Indie Flow',           album:'Transparent',     genre:'Indie',          year:2024, cover:'https://picsum.photos/seed/crys10/300/300', audio:'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3', color:'#003030' },
+  { id: 'fHI8X4OXluQ', title: 'Blinding Lights', artist: 'The Weeknd', album: 'After Hours', genre: 'Synth-pop', year: 2020, cover: 'https://i.ytimg.com/vi/fHI8X4OXluQ/hqdefault.jpg', audio: '/api/stream?id=fHI8X4OXluQ', color: '#0d1b4b', duration: '3:21', durationSecs: 201 },
+  { id: 'JGwWNGJdvx8', title: 'Shape of You', artist: 'Ed Sheeran', album: '÷ (Divide)', genre: 'Pop', year: 2017, cover: 'https://i.ytimg.com/vi/JGwWNGJdvx8/hqdefault.jpg', audio: '/api/stream?id=JGwWNGJdvx8', color: '#1a0a40', duration: '3:53', durationSecs: 233 },
+  { id: '7wtfhZwyrcc', title: 'Believer', artist: 'Imagine Dragons', album: 'Evolve', genre: 'Alt-rock', year: 2017, cover: 'https://i.ytimg.com/vi/7wtfhZwyrcc/hqdefault.jpg', audio: '/api/stream?id=7wtfhZwyrcc', color: '#0a2010', duration: '3:24', durationSecs: 204 },
+  { id: 'kTJczUoc26U', title: 'Stay', artist: 'The Kid LAROI & Justin Bieber', album: 'F*CK LOVE 3: OVER YOU', genre: 'Pop-rock', year: 2021, cover: 'https://i.ytimg.com/vi/kTJczUoc26U/hqdefault.jpg', audio: '/api/stream?id=kTJczUoc26U', color: '#3a0a20', duration: '2:21', durationSecs: 141 },
+  { id: '34Na4j8AVgA', title: 'Starboy', artist: 'The Weeknd ft. Daft Punk', album: 'Starboy', genre: 'R&B/Electronic', year: 2016, cover: 'https://i.ytimg.com/vi/34Na4j8AVgA/hqdefault.jpg', audio: '/api/stream?id=34Na4j8AVgA', color: '#0a1a3e', duration: '3:50', durationSecs: 230 },
+  { id: 'H5v3kku4y6Q', title: 'As It Was', artist: 'Harry Styles', album: "Harry's House", genre: 'Indie-pop', year: 2022, cover: 'https://i.ytimg.com/vi/H5v3kku4y6Q/hqdefault.jpg', audio: '/api/stream?id=H5v3kku4y6Q', color: '#3a1a00', duration: '2:47', durationSecs: 167 },
+  { id: 'G7KNmW9a75Y', title: 'Flowers', artist: 'Miley Cyrus', album: 'Endless Summer Vacation', genre: 'Pop', year: 2023, cover: 'https://i.ytimg.com/vi/G7KNmW9a75Y/hqdefault.jpg', audio: '/api/stream?id=G7KNmW9a75Y', color: '#3a2800', duration: '3:20', durationSecs: 200 },
+  { id: '2Vv-BfVoq4g', title: 'Perfect', artist: 'Ed Sheeran', album: '÷ (Divide)', genre: 'Pop', year: 2017, cover: 'https://i.ytimg.com/vi/2Vv-BfVoq4g/hqdefault.jpg', audio: '/api/stream?id=2Vv-BfVoq4g', color: '#0a0a20', duration: '4:23', durationSecs: 263 },
+  { id: '0zGcUoRlpgY', title: 'Closer', artist: 'The Chainsmokers ft. Halsey', album: 'Collage', genre: 'EDM/Pop', year: 2016, cover: 'https://i.ytimg.com/vi/0zGcUoRlpgY/hqdefault.jpg', audio: '/api/stream?id=0zGcUoRlpgY', color: '#2e1800', duration: '4:05', durationSecs: 245 },
+  { id: 'DyDfgMOUUA8', title: 'Bad Guy', artist: 'Billie Eilish', album: 'When We All Fall Asleep, Where Do We Go?', genre: 'Electropop', year: 2019, cover: 'https://i.ytimg.com/vi/DyDfgMOUUA8/hqdefault.jpg', audio: '/api/stream?id=DyDfgMOUUA8', color: '#003030', duration: '3:14', durationSecs: 194 }
 ];
 
 /* ── STATE ──────────────────────────────────────────────────── */
 let songs         = [...SONGS];
+let trendingSongs = [...SONGS];
 let currentIndex  = -1;
 let isPlaying     = false;
 let isShuffle     = false;
@@ -23,11 +24,12 @@ let repeatMode    = 0;   // 0=off 1=all 2=one
 let likedSongs    = new Set();
 let shuffleOrder  = [];
 let isDragging    = false;
+let apiBase       = '';
 
 /* ── AUDIO ──────────────────────────────────────────────────── */
 const audio = new Audio();
 audio.volume = 0.7;
-audio.crossOrigin = 'anonymous';
+// audio.crossOrigin = 'anonymous'; // disabled to avoid CORS policies when playing raw audio streams
 
 /* ── DOM REFS ───────────────────────────────────────────────── */
 const $  = id => document.getElementById(id);
@@ -77,15 +79,45 @@ function init() {
 async function tryFetchFromAPI() {
   try {
     const res  = await fetch('/api/songs');
-    if (!res.ok) return;
+    if (!res.ok) throw new Error();
     const data = await res.json();
     if (data.songs && data.songs.length) {
-      songs = data.songs;
+      apiBase = '';
+      songs = data.songs.map(mapAudioUrl);
+      trendingSongs = [...songs];
       renderQuickPicks(songs.slice(0, 6));
       renderSongList(songs);
       renderBanner(songs[0]);
     }
-  } catch (_) { /* use local SONGS data */ }
+  } catch (_) {
+    try {
+      const res  = await fetch('http://localhost:8000/api/songs');
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      if (data.songs && data.songs.length) {
+        apiBase = 'http://localhost:8000';
+        songs = data.songs.map(mapAudioUrl);
+        trendingSongs = [...songs];
+        renderQuickPicks(songs.slice(0, 6));
+        renderSongList(songs);
+        renderBanner(songs[0]);
+      }
+    } catch (err) {
+      apiBase = '';
+      songs = SONGS.map(mapAudioUrl);
+      trendingSongs = [...songs];
+      renderQuickPicks(songs.slice(0, 6));
+      renderSongList(songs);
+      renderBanner(songs[0]);
+    }
+  }
+}
+
+function mapAudioUrl(song) {
+  if (song.audio && song.audio.startsWith('/api/')) {
+    return { ...song, audio: apiBase + song.audio };
+  }
+  return song;
 }
 
 /* ── RENDER FUNCTIONS ───────────────────────────────────────── */
@@ -151,28 +183,18 @@ function playSong(idx) {
   audio.src = song.audio;
   audio.load();
   audio.play().catch(() => showToast('Click play to start (browser policy)'));
-  isPlaying = true;
 
   updateNowPlayingUI(song);
-  updatePlayPauseIcon();
-  updateActiveSongHighlight();
-  el.npBar.classList.add('is-playing');
   renderBanner(song);
 }
 
 function togglePlay() {
   if (currentIndex === -1) { playSong(0); return; }
-  if (isPlaying) {
+  if (!audio.paused) {
     audio.pause();
-    isPlaying = false;
-    el.npBar.classList.remove('is-playing');
   } else {
-    audio.play();
-    isPlaying = true;
-    el.npBar.classList.add('is-playing');
+    audio.play().catch(() => showToast('Click play to start (browser policy)'));
   }
-  updatePlayPauseIcon();
-  updateActiveSongHighlight();
 }
 
 function playNext() {
@@ -266,21 +288,40 @@ function toggleMute() {
   el.btnMute.classList.toggle('active', audio.muted);
 }
 
-/* ── SEARCH ─────────────────────────────────────────────────── */
-function handleSearch(q) {
-  const query = q.trim().toLowerCase();
+let searchTimeout = null;
+
+async function handleSearch(q) {
+  const query = q.trim();
   if (!query) {
+    clearTimeout(searchTimeout);
+    songs = [...trendingSongs];
     renderSongList(songs);
     renderQuickPicks(songs.slice(0, 6));
     return;
   }
-  const filtered = songs.filter(s =>
-    s.title.toLowerCase().includes(query) ||
-    s.artist.toLowerCase().includes(query) ||
-    s.genre.toLowerCase().includes(query) ||
-    s.album.toLowerCase().includes(query)
-  );
-  renderSongList(filtered);
+
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(async () => {
+    try {
+      const res = await fetch((apiBase || '') + '/api/search?q=' + encodeURIComponent(query));
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      if (data.songs && data.songs.length) {
+        songs = data.songs.map(mapAudioUrl);
+        renderSongList(songs);
+      } else {
+        el.songList.innerHTML = `<div style="padding: 20px; color: #b3b3b3; text-align: center;">No results found for "${query}"</div>`;
+      }
+    } catch (err) {
+      const filtered = trendingSongs.filter(s =>
+        s.title.toLowerCase().includes(query.toLowerCase()) ||
+        s.artist.toLowerCase().includes(query.toLowerCase()) ||
+        s.album.toLowerCase().includes(query.toLowerCase())
+      );
+      songs = filtered;
+      renderSongList(songs);
+    }
+  }, 300);
 }
 
 /* ── TOAST ──────────────────────────────────────────────────── */

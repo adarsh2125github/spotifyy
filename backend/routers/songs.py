@@ -1,32 +1,43 @@
-from fastapi import APIRouter
-from fastapi.responses import FileResponse
-from pathlib import Path
+from fastapi import APIRouter, Query
+from fastapi.responses import RedirectResponse
+import yt_dlp
 
-from services.song_service import get_all_songs, get_song_by_id
+from services.song_service import get_all_songs, search_youtube_tracks
 
-router = APIRouter()
+router = APIRouter(prefix="/api")
 
 
 @router.get("/songs")
 def get_songs():
-    return get_all_songs()
+    return {
+        "songs": get_all_songs(),
+        "total": len(get_all_songs())
+    }
 
 
-@router.get("/songs/{song_id}")
-def get_song(song_id: int):
-    song = get_song_by_id(song_id)
+@router.get("/search")
+def search_songs(q: str = Query("")):
+    results = search_youtube_tracks(q)
+    return {
+        "songs": results,
+        "total": len(results)
+    }
 
-    if song:
-        return song
 
-    return {"message": "Song not found"}
+@router.get("/stream")
+def stream_song(id: str = Query("")):
+    if not id:
+        return {"error": "Missing video ID"}
 
-
-@router.get("/stream/{song_name}")
-def stream_song(song_name: str):
-    file_path = Path("songs") / song_name
-
-    if file_path.exists():
-        return FileResponse(file_path, media_type="audio/mpeg")
-
-    return {"message": "Song not found"}
+    ydl_opts = {
+        'format': 'bestaudio/best',
+        'quiet': True,
+        'nocheckcertificate': True
+    }
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        try:
+            info = ydl.extract_info(id, download=False)
+            audio_url = info.get('url')
+            return RedirectResponse(url=audio_url)
+        except Exception as e:
+            return {"error": f"Failed to extract stream: {e}"}
