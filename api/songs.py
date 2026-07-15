@@ -137,10 +137,44 @@ SONGS = [
 
 class handler(BaseHTTPRequestHandler):
     def do_GET(self):
+        import os
+        import urllib.parse
+        
+        local_songs = []
+        # Find the path to the root 'songs' directory
+        # This python script is in api/songs.py, so the root is one level up
+        root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        songs_dir = os.path.join(root_dir, 'songs')
+        
+        if os.path.exists(songs_dir):
+            for file in os.listdir(songs_dir):
+                if file.endswith('.mp3'):
+                    name, _ = os.path.splitext(file)
+                    # spotdl names files: "Artist - Title.mp3"
+                    parts = name.split(' - ', 1)
+                    artist = parts[0] if len(parts) > 1 else "Unknown Artist"
+                    title = parts[1] if len(parts) > 1 else parts[0]
+                    
+                    # Convert to app-compatible song schema
+                    local_songs.append({
+                        "id": f"local_{urllib.parse.quote(name)}",
+                        "title": title,
+                        "artist": artist,
+                        "album": "Local Downloads",
+                        "genre": "Local",
+                        "year": 2026,
+                        "cover": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' fill='%23282828'/%3E%3Cpath d='M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z' fill='%231DB954'/%3E%3C/svg%3E",
+                        "audio": f"/songs/{urllib.parse.quote(file)}",
+                        "color": "#1DB954",
+                        "duration": "Local Audio",
+                        "durationSecs": 180
+                    })
+
+        all_songs = local_songs + SONGS
         data = json.dumps({
-            "songs": SONGS,
-            "total": len(SONGS),
-            "featured": SONGS[:3]
+            "songs": all_songs,
+            "total": len(all_songs),
+            "featured": all_songs[:3]
         })
         self.send_response(200)
         self.send_header('Content-Type', 'application/json')
