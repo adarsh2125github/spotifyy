@@ -196,18 +196,8 @@
     </div>
   </footer>
 
-  <!-- One-time unlock overlay (browser autoplay policy) -->
-  <div id="unlockOverlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:9999; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px);">
-    <div style="text-align:center; color:#fff;">
-      <div style="font-size:3rem; margin-bottom:12px;">🎵</div>
-      <div style="font-size:1.3rem; font-weight:700; margin-bottom:8px;">Tap to Start Listening</div>
-      <div style="font-size:.9rem; color:#b3b3b3; margin-bottom:20px;">Browser requires one tap before audio plays</div>
-      <button id="unlockBtn" style="background:#1db954; color:#000; border:none; border-radius:500px; padding:14px 40px; font-size:1rem; font-weight:700; cursor:pointer; letter-spacing:.5px;">▶ Play</button>
-    </div>
-  </div>
-
-  <!-- YouTube player: kept visible (1px) in viewport so autoplay works -->
-  <div id="yt-player" style="position:fixed; bottom:92px; right:8px; width:1px; height:1px; overflow:hidden; opacity:0.01; pointer-events:none; z-index:1;"></div>
+  <!-- Native HTML5 Audio Element -->
+  <audio id="mainAudio" preload="auto"></audio>
 
   <script src="app.js"></script>
 </body>
