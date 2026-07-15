@@ -18,4 +18,4 @@ app.include_router(songs_router)
 
 @app.get("/")
 def home():
-    return {"message": "Spotify Backend"}
+    return {"message": "Tunify Backend"}
