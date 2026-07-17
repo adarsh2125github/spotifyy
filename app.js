@@ -16,6 +16,17 @@ const SONGS = [
 
 const COVER_FALLBACK = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' fill='%23282828'/%3E%3Cpath d='M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z' fill='%23535353'/%3E%3C/svg%3E";
 
+const BROWSE_CATEGORIES = [
+  { title: 'Podcasts', color: '#27856a', img: 'https://images.unsplash.com/photo-1590602847861-f357a9332bbc?q=80&w=200&auto=format&fit=crop' },
+  { title: 'Made For You', color: '#1e3264', img: 'https://images.unsplash.com/photo-1498038432885-c6f3f1b912ee?q=80&w=200&auto=format&fit=crop' },
+  { title: 'New Releases', color: '#e8115b', img: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=200&auto=format&fit=crop' },
+  { title: 'Discover', color: '#8d67ab', img: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=200&auto=format&fit=crop' },
+  { title: 'Pop', color: '#148a08', img: 'https://images.unsplash.com/photo-1529518969858-8bbc65152f6e?q=80&w=200&auto=format&fit=crop' },
+  { title: 'Hip-Hop', color: '#bc5900', img: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=200&auto=format&fit=crop' },
+  { title: 'Rock', color: '#e91429', img: 'https://images.unsplash.com/photo-1498038432885-c6f3f1b912ee?q=80&w=200&auto=format&fit=crop' },
+  { title: 'Latin', color: '#7d4b32', img: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=200&auto=format&fit=crop' }
+];
+
 /* ── STATE ──────────────────────────────────────────────────── */
 let songs         = [...SONGS];
 let trendingSongs = [...SONGS];
@@ -26,7 +37,15 @@ let repeatMode    = 0;   // 0=off 1=all 2=one
 let likedSongs    = new Set();
 let shuffleOrder  = [];
 let isDragging    = false;
-let apiBase       = '';
+let currentTab    = 'home'; // 'home' | 'search' | 'library' | 'liked'
+let userLoggedIn  = false;
+let playlists     = [
+  { name: 'Chill Mix', songs: [] },
+  { name: 'Workout Beats', songs: [] },
+  { name: 'Late Night Vibes', songs: [] },
+  { name: 'Road Trip', songs: [] },
+  { name: 'Focus Mode', songs: [] }
+];
 
 /* ── NATIVE AUDIO PLAYER ─────────────────────────────────────── */
 let audio = null;
@@ -66,7 +85,6 @@ function setupAudioPlayer() {
 
   audio.addEventListener('error', (e) => {
     console.error("Audio error:", e);
-    // If the audio source fails (likely due to a rate limit or 403), fetch client-side stream url
     const song = songs[currentIndex];
     if (song && !song._retried) {
       song._retried = true;
@@ -86,7 +104,6 @@ function setupAudioPlayer() {
   });
 }
 
-// Bypasses backend rate limits by resolving directly using public client-side Invidious/Piped APIs
 async function resolveClientStreamUrl(videoId) {
   const instances = [
     `https://invidious.projectsegfau.lt/api/v1/videos/${videoId}`,
@@ -103,7 +120,6 @@ async function resolveClientStreamUrl(videoId) {
         return data.formatStreams[0].url;
       }
       if (data.adaptiveFormats && data.adaptiveFormats.length > 0) {
-        // Find best audio format
         const audioFormats = data.adaptiveFormats.filter(f => f.type.startsWith('audio/'));
         if (audioFormats.length > 0) return audioFormats[0].url;
       }
@@ -150,14 +166,30 @@ const el = {
   sectionAllSongs:   $('sectionAllSongs'),
   iconPlay:      document.querySelector('.icon-play'),
   iconPause:     document.querySelector('.icon-pause'),
+  loginPage:     $('loginPage'),
+  loginForm:     $('loginForm'),
+  loginEmail:    $('loginEmail'),
+  loginPassword: $('loginPassword'),
+  loginError:    $('loginError'),
+  btnLogout:     $('btnLogout'),
+  userDropdown:  $('userDropdown'),
+  btnUser:       $('btnUser'),
+  navHome:       $('navHome'),
+  navSearch:     $('navSearch'),
+  navLibrary:    $('navLibrary'),
+  btnLikedSongs: $('btnLikedSongs'),
+  btnCreatePlaylist: $('btnCreatePlaylist')
 };
 
 /* ── INIT ───────────────────────────────────────────────────── */
 function init() {
   setupAudioPlayer();
+  checkLoginState();
   renderBanner(songs[0]);
   renderQuickPicks(songs.slice(0, 6));
   renderSongList(songs);
+  renderBrowseCards();
+  renderPlaylistsSidebar();
   bindEvents();
   tryFetchFromAPI();
 }
@@ -173,12 +205,122 @@ async function tryFetchFromAPI() {
       renderQuickPicks(songs.slice(0, 6));
       renderSongList(songs);
       renderBanner(songs[0]);
+      // Re-populate Liked and Library if loaded
+      if (currentTab === 'liked') renderLikedSongs();
+      if (currentTab === 'library') renderLibrary();
     }
   } catch (_) { /* Keep default hardcoded songs */ }
 }
 
+/* ── AUTHENTICATION ─────────────────────────────────────────── */
+function checkLoginState() {
+  const loggedIn = localStorage.getItem('user_logged_in') === 'true';
+  const username = localStorage.getItem('username');
+
+  if (loggedIn) {
+    userLoggedIn = true;
+    if (el.loginPage) el.loginPage.style.display = 'none';
+    if ($('app')) $('app').style.display = 'flex';
+    if ($('sidebar')) $('sidebar').style.display = 'flex';
+    if (el.npBar) el.npBar.style.display = 'flex';
+    
+    // Set username initials
+    if (el.btnUser && username) {
+      el.btnUser.textContent = username.charAt(0).toUpperCase();
+    }
+  } else {
+    userLoggedIn = false;
+    if (el.loginPage) el.loginPage.style.display = 'flex';
+    if ($('app')) $('app').style.display = 'none';
+    if ($('sidebar')) $('sidebar').style.display = 'none';
+    if (el.npBar) el.npBar.style.display = 'none';
+  }
+}
+
+function handleLoginSubmit() {
+  const email = el.loginEmail.value.trim();
+  const password = el.loginPassword.value.trim();
+
+  if (email && password) {
+    localStorage.setItem('user_logged_in', 'true');
+    localStorage.setItem('username', email);
+    el.loginError.style.display = 'none';
+    checkLoginState();
+    switchTab('home');
+    showToast(`Welcome back, ${email}!`);
+  } else {
+    el.loginError.style.display = 'block';
+  }
+}
+
+function handleLogout() {
+  localStorage.removeItem('user_logged_in');
+  localStorage.removeItem('username');
+  checkLoginState();
+  if (audio && !audio.paused) {
+    audio.pause();
+  }
+  el.userDropdown.classList.remove('show');
+  showToast("Logged out successfully");
+}
+
+/* ─── TAB ROUTING ─── */
+function switchTab(tab) {
+  currentTab = tab;
+
+  // Clear active classes from sidebar items
+  document.querySelectorAll('.nav-item').forEach(e => e.classList.remove('active'));
+  document.querySelectorAll('.sidebar-action-btn').forEach(e => e.classList.remove('active'));
+
+  // Set active class on active tab button
+  if (tab === 'home' && el.navHome) el.navHome.classList.add('active');
+  if (tab === 'search' && el.navSearch) el.navSearch.classList.add('active');
+  if (tab === 'library' && el.navLibrary) el.navLibrary.classList.add('active');
+  if (tab === 'liked' && el.btnLikedSongs) el.btnLikedSongs.classList.add('active');
+
+  // Toggle Search input block in Topbar
+  const searchBox = $('searchBox');
+  if (searchBox) {
+    searchBox.style.display = (tab === 'search') ? 'flex' : 'none';
+  }
+
+  // Swap panels
+  document.querySelectorAll('.view-panel').forEach(panel => panel.classList.remove('active'));
+  const targetId = 'view' + tab.charAt(0).toUpperCase() + tab.slice(1);
+  const targetPanel = $(targetId);
+  if (targetPanel) {
+    targetPanel.classList.add('active');
+  }
+
+  // Focus and setup
+  if (tab === 'search') {
+    if (el.searchInput) {
+      el.searchInput.value = '';
+      el.searchInput.focus();
+    }
+    // Restore default browse cards view
+    $('searchResultSection').style.display = 'none';
+    document.querySelector('#viewSearch .content-section:first-child').style.display = 'block';
+    renderBrowseCards();
+  }
+
+  if (tab === 'library') {
+    renderLibrary();
+  }
+
+  if (tab === 'liked') {
+    renderLikedSongs();
+  }
+
+  // Scroll to top
+  if (el.pageScroll) {
+    el.pageScroll.scrollTop = 0;
+  }
+}
+
 /* ── RENDER FUNCTIONS ───────────────────────────────────────── */
 function renderBanner(song) {
+  if (!song) return;
   el.bannerTitle.textContent  = song.title;
   el.bannerArtist.textContent = `${song.artist} · ${song.album} · ${song.year}`;
   el.bannerCover.src          = song.cover;
@@ -234,27 +376,153 @@ function renderSongList(list) {
   }).join('');
 }
 
+function renderBrowseCards() {
+  const grid = $('browseGrid');
+  if (!grid) return;
+  grid.innerHTML = BROWSE_CATEGORIES.map(cat => `
+    <div class="browse-card" style="background-color: ${cat.color};">
+      <div class="browse-card-title">${cat.title}</div>
+      <img class="browse-card-img" src="${cat.img}" alt="" loading="lazy" />
+    </div>
+  `).join('');
+}
+
+function renderLibrary() {
+  const grid = $('libraryGrid');
+  if (!grid) return;
+
+  const localList = songs.filter(s => s.id.startsWith('local_') || s.audio.startsWith('/songs/'));
+  const likedCount = songs.filter(s => likedSongs.has(s.id)).length;
+
+  let html = `
+    <!-- Liked Songs Library Card -->
+    <div class="song-card" style="grid-column: span 2; background: linear-gradient(135deg, #450af5 0%, #8e8ee0 100%);" id="cardLibraryLiked">
+      <div style="font-size: 2.5rem; margin-bottom: 24px;">♥</div>
+      <div class="song-card-title" style="font-size: 1.5rem; font-weight: 700; white-space: normal;">Liked Songs</div>
+      <div class="song-card-artist" style="color: #fff;">${likedCount} songs</div>
+    </div>
+  `;
+
+  // Render playlists
+  playlists.forEach((pl, idx) => {
+    html += `
+      <div class="song-card playlist-card" data-pl-idx="${idx}">
+        <div style="width: 100%; aspect-ratio: 1; border-radius: 6px; background: #282828; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; font-size: 2.5rem; font-weight: 700; color: var(--accent);">
+          🎵
+        </div>
+        <div class="song-card-title">${pl.name}</div>
+        <div class="song-card-artist">${pl.songs.length} songs</div>
+      </div>
+    `;
+  });
+
+  // Render local downloads card if local tracks exist
+  if (localList.length > 0) {
+    html += `
+      <div class="song-card local-card" id="cardLibraryLocal">
+        <div style="width: 100%; aspect-ratio: 1; border-radius: 6px; background: #1e3264; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; font-size: 2rem;">
+          📥
+        </div>
+        <div class="song-card-title">Local Downloads</div>
+        <div class="song-card-artist" style="color: #fff;">${localList.length} tracks</div>
+      </div>
+    `;
+  }
+
+  grid.innerHTML = html;
+}
+
+function renderLikedSongs() {
+  const listEl = $('likedSongList');
+  const countEl = $('likedCount');
+  if (!listEl) return;
+
+  const likedList = songs.filter(s => likedSongs.has(s.id));
+  if (countEl) countEl.textContent = likedList.length;
+
+  if (likedList.length === 0) {
+    listEl.innerHTML = `<div style="padding: 40px; color: #b3b3b3; text-align: center;">Songs you like will appear here.</div>`;
+    return;
+  }
+
+  listEl.innerHTML = likedList.map((s, i) => {
+    const realIdx = songs.indexOf(s);
+    const active  = currentIndex === realIdx;
+    return `
+    <div class="song-row ${active ? 'active' : ''}" data-idx="${realIdx}" id="row-liked-${s.id}">
+      <div class="row-num">
+        <span class="num-text">${i + 1}</span>
+        <span class="row-play-icon">
+          <svg viewBox="0 0 24 24">${active && isPlaying
+            ? '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>'
+            : '<path d="M8 5v14l11-7z"/>'}
+          </svg>
+        </span>
+      </div>
+      <div class="row-info">
+        ${coverImg(s.cover, 'row-thumb')}
+        <div class="row-text">
+          <div class="row-title">${s.title}</div>
+          <div class="row-artist">${s.artist}</div>
+        </div>
+      </div>
+      <div class="row-album">${s.album}</div>
+      <div class="row-genre">${s.genre}</div>
+      <div class="row-dur">${s.duration || '--:--'}</div>
+    </div>`;
+  }).join('');
+}
+
+function createPlaylist() {
+  const name = prompt("Enter playlist name:", `My Playlist #${playlists.length + 1}`);
+  if (!name) return;
+
+  playlists.push({ name: name, songs: [] });
+  renderPlaylistsSidebar();
+  if (currentTab === 'library') renderLibrary();
+  showToast(`Playlist "${name}" created!`);
+}
+
+function renderPlaylistsSidebar() {
+  const container = $('sidebarPlaylists');
+  if (!container) return;
+  container.innerHTML = playlists.map((pl, idx) => `
+    <p class="playlist-item" data-pl-idx="${idx}">${pl.name}</p>
+  `).join('');
+}
+
 /* ── PLAYBACK ───────────────────────────────────────────────── */
+// List of public Piped/Invidious instances for reliable proxy streaming
+const STREAM_APIS = [
+  id => `https://pipedproxy.kavin.rocks/streams/${id}`,
+  id => `https://invidious.projectsegfau.lt/latest_version?id=${id}&itag=140`,
+  id => `https://invidious.flokinet.to/latest_version?id=${id}&itag=140`,
+  id => `/api/stream?id=${id}`
+];
+
 async function playSong(idx) {
   if (idx < 0 || idx >= songs.length) return;
   currentIndex = idx;
   const song = songs[idx];
 
-  // Primary: resolve via backend stream API.
-  let audioUrl = song.audio;
-  if (!audioUrl.startsWith('http') && !audioUrl.startsWith('/')) {
-    audioUrl = `/api/stream?id=${song.id}`;
+  if (song.audio && song.audio.startsWith('http') && song.audio.includes('.mp3')) {
+    audio.src = song.audio;
+  } else if (song.audio && song.audio.startsWith('/songs/')) {
+    audio.src = song.audio;
+  } else {
+    song._streamAttempts = 0;
+    audio.src = `https://invidious.flokinet.to/latest_version?id=${song.id}&itag=140`;
   }
-
-  audio.src = audioUrl;
+  
   audio.load();
   
   try {
     await audio.play();
   } catch (err) {
-    // If browser auto-play policy blocks standard play, show message to prompt user click.
-    console.warn("Autoplay block, retrying with click context helper", err);
-    showToast("▶ Click play in player bar to listen");
+    if (err.name === 'NotAllowedError') {
+      console.warn("Autoplay block, retrying with click context helper", err);
+      showToast("▶ Click play in player bar to listen");
+    }
   }
 
   updateNowPlayingUI(song);
@@ -369,30 +637,22 @@ function toggleMute() {
 
 /* ── SEARCH ─────────────────────────────────────────────────── */
 let searchTimeout = null;
-let isSearchActive = false;
-
-function setSearchView(active) {
-  if (isSearchActive === active) return;
-  isSearchActive = active;
-  el.featuredBanner.style.display    = active ? 'none' : 'flex';
-  el.sectionQuickPicks.style.display = active ? 'none' : 'block';
-  const title = el.sectionAllSongs.querySelector('.section-title');
-  if (title) title.textContent = active ? 'Search Results' : 'All Songs';
-}
 
 async function handleSearch(q) {
   const query = q.trim();
+  const searchResultSec = $('searchResultSection');
+  const browseGridSec = document.querySelector('#viewSearch .content-section:first-child');
+  const listEl = $('searchResultList');
 
   if (!query) {
     clearTimeout(searchTimeout);
-    setSearchView(false);
-    songs = [...trendingSongs];
-    renderSongList(songs);
-    renderQuickPicks(songs.slice(0, 6));
+    if (searchResultSec) searchResultSec.style.display = 'none';
+    if (browseGridSec) browseGridSec.style.display = 'block';
     return;
   }
 
-  setSearchView(true);
+  if (searchResultSec) searchResultSec.style.display = 'block';
+  if (browseGridSec) browseGridSec.style.display = 'none';
 
   // Instant local filtering
   const localResults = trendingSongs.filter(s =>
@@ -400,11 +660,38 @@ async function handleSearch(q) {
     s.artist.toLowerCase().includes(query.toLowerCase()) ||
     s.album.toLowerCase().includes(query.toLowerCase())
   );
-  songs = localResults.length ? localResults : [...trendingSongs];
-  renderSongList(songs);
   
-  if (!localResults.length) {
-    el.songList.innerHTML = `<div style="padding: 40px; color: #b3b3b3; text-align: center;">Searching global library for "${query}"...</div>`;
+  if (listEl) {
+    listEl.innerHTML = (localResults.length ? localResults : trendingSongs).map((s, i) => {
+      const realIdx = songs.indexOf(s);
+      const active  = currentIndex === realIdx;
+      return `
+      <div class="song-row ${active ? 'active' : ''}" data-idx="${realIdx}" id="row-search-${s.id}">
+        <div class="row-num">
+          <span class="num-text">${i + 1}</span>
+          <span class="row-play-icon">
+            <svg viewBox="0 0 24 24">${active && isPlaying
+              ? '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>'
+              : '<path d="M8 5v14l11-7z"/>'}
+            </svg>
+          </span>
+        </div>
+        <div class="row-info">
+          ${coverImg(s.cover, 'row-thumb')}
+          <div class="row-text">
+            <div class="row-title">${s.title}</div>
+            <div class="row-artist">${s.artist}</div>
+          </div>
+        </div>
+        <div class="row-album">${s.album}</div>
+        <div class="row-genre">${s.genre}</div>
+        <div class="row-dur">${s.duration || '--:--'}</div>
+      </div>`;
+    }).join('');
+  }
+
+  if (!localResults.length && listEl) {
+    listEl.innerHTML = `<div style="padding: 40px; color: #b3b3b3; text-align: center;">Searching global library for "${query}"...</div>`;
   }
 
   clearTimeout(searchTimeout);
@@ -413,11 +700,39 @@ async function handleSearch(q) {
       const res = await fetch('/api/search?q=' + encodeURIComponent(query));
       if (!res.ok) throw new Error();
       const data = await res.json();
-      if (data.songs && data.songs.length) {
-        songs = data.songs;
-        renderSongList(songs);
-      } else if (!localResults.length) {
-        el.songList.innerHTML = `<div style="padding: 40px; color: #b3b3b3; text-align: center;">No results found for "${query}"</div>`;
+      if (data.songs && data.songs.length && listEl && query === el.searchInput.value.trim()) {
+        listEl.innerHTML = data.songs.map((s, i) => {
+          let realIdx = songs.findIndex(x => x.id === s.id);
+          if (realIdx === -1) {
+            songs.push(s);
+            realIdx = songs.length - 1;
+          }
+          const active = currentIndex === realIdx;
+          return `
+          <div class="song-row ${active ? 'active' : ''}" data-idx="${realIdx}" id="row-search-${s.id}">
+            <div class="row-num">
+              <span class="num-text">${i + 1}</span>
+              <span class="row-play-icon">
+                <svg viewBox="0 0 24 24">${active && isPlaying
+                  ? '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>'
+                  : '<path d="M8 5v14l11-7z"/>'}
+                </svg>
+              </span>
+            </div>
+            <div class="row-info">
+              ${coverImg(s.cover, 'row-thumb')}
+              <div class="row-text">
+                <div class="row-title">${s.title}</div>
+                <div class="row-artist">${s.artist}</div>
+              </div>
+            </div>
+            <div class="row-album">${s.album}</div>
+            <div class="row-genre">${s.genre}</div>
+            <div class="row-dur">${s.duration || '--:--'}</div>
+          </div>`;
+        }).join('');
+      } else if (!localResults.length && listEl && query === el.searchInput.value.trim()) {
+        listEl.innerHTML = `<div style="padding: 40px; color: #b3b3b3; text-align: center;">No results found for "${query}"</div>`;
       }
     } catch (err) {
       // Keep showing local filter
@@ -440,6 +755,62 @@ function showToast(msg) {
 
 /* ── EVENT BINDING ──────────────────────────────────────────── */
 function bindEvents() {
+  // Authentication Forms
+  if (el.loginForm) {
+    el.loginForm.addEventListener('submit', handleLoginSubmit);
+  }
+
+  // Profile Menu Dropdown toggle
+  if (el.btnUser) {
+    el.btnUser.addEventListener('click', (e) => {
+      e.stopPropagation();
+      el.userDropdown.classList.toggle('show');
+    });
+  }
+
+  // Close dropdown menu if clicking anywhere outside
+  document.addEventListener('click', () => {
+    if (el.userDropdown) el.userDropdown.classList.remove('show');
+  });
+
+  if (el.btnLogout) {
+    el.btnLogout.addEventListener('click', handleLogout);
+  }
+
+  // Sidebar navigation switching
+  if (el.navHome) el.navHome.addEventListener('click', (e) => { e.preventDefault(); switchTab('home'); });
+  if (el.navSearch) el.navSearch.addEventListener('click', (e) => { e.preventDefault(); switchTab('search'); });
+  if (el.navLibrary) el.navLibrary.addEventListener('click', (e) => { e.preventDefault(); switchTab('library'); });
+  if (el.btnLikedSongs) el.btnLikedSongs.addEventListener('click', (e) => { e.preventDefault(); switchTab('liked'); });
+
+  if (el.btnCreatePlaylist) {
+    el.btnCreatePlaylist.addEventListener('click', createPlaylist);
+  }
+
+  // Sidebar dynamic playlist routing
+  $('sidebarPlaylists').addEventListener('click', (e) => {
+    const item = e.target.closest('.playlist-item');
+    if (!item) return;
+    const plIdx = parseInt(item.dataset.plIdx);
+    showToast(`Loading Playlist: ${playlists[plIdx].name}`);
+    switchTab('library');
+  });
+
+  // Library Dynamic Grid clicks
+  $('libraryGrid').addEventListener('click', (e) => {
+    const card = e.target.closest('.song-card');
+    if (!card) return;
+    if (card.id === 'cardLibraryLiked') {
+      switchTab('liked');
+    } else if (card.classList.contains('playlist-card')) {
+      const plIdx = parseInt(card.dataset.plIdx);
+      showToast(`Loading Playlist: ${playlists[plIdx].name}`);
+    } else if (card.id === 'cardLibraryLocal') {
+      showToast("Loading Local Downloads list...");
+    }
+  });
+
+  // Playback Control binds
   el.btnPlay.addEventListener('click', togglePlay);
   el.btnNext.addEventListener('click', playNext);
   el.btnPrev.addEventListener('click', playPrev);
@@ -462,10 +833,14 @@ function bindEvents() {
     const id = songs[currentIndex].id;
     likedSongs.has(id) ? likedSongs.delete(id) : likedSongs.add(id);
     el.npLike.classList.toggle('liked', likedSongs.has(id));
+    // Live update liked views
+    if (currentTab === 'liked') renderLikedSongs();
+    if (currentTab === 'library') renderLibrary();
     showToast(likedSongs.has(id) ? '♥ Added to Liked Songs' : 'Removed from Liked Songs');
   });
 
-  el.songList.addEventListener('click', e => {
+  // PageScroll delegated listener for .song-row clicks
+  el.pageScroll.addEventListener('click', e => {
     const row = e.target.closest('.song-row');
     if (!row) return;
     const idx = parseInt(row.dataset.idx);
@@ -473,6 +848,7 @@ function bindEvents() {
     else playSong(idx);
   });
 
+  // Quick picks
   el.quickGrid.addEventListener('click', e => {
     const src = e.target.closest('.card-play-btn') || e.target.closest('.song-card');
     if (!src) return;
@@ -492,6 +868,7 @@ function bindEvents() {
     showToast('Shuffling all songs');
   });
 
+  // Progress Bar dragging
   el.npProgress.addEventListener('mousedown', e => {
     isDragging = true;
     seekTo(e);
@@ -499,18 +876,22 @@ function bindEvents() {
   document.addEventListener('mousemove', e => { if (isDragging) seekTo(e); });
   document.addEventListener('mouseup',   () => { isDragging = false; });
 
+  // Volume bindings
   el.volSlider.addEventListener('input', e => setVolume(parseInt(e.target.value)));
   el.btnMute.addEventListener('click', toggleMute);
 
+  // Search input binding
   el.searchInput.addEventListener('input', e => handleSearch(e.target.value));
 
+  // Topbar scroll tint
   el.pageScroll.addEventListener('scroll', () => {
     el.topbar.classList.toggle('scrolled', el.pageScroll.scrollTop > 60);
   });
 
+  // Hotkeys
   document.addEventListener('keydown', e => {
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-    if (!audio) return;
+    if (!userLoggedIn || !audio) return;
     switch (e.code) {
       case 'Space':       e.preventDefault(); togglePlay(); break;
       case 'ArrowRight':  audio.currentTime = Math.min(audio.duration || 0, audio.currentTime + 5); break;
@@ -523,6 +904,7 @@ function bindEvents() {
     }
   });
 
+  el.volSlider.style.setProperty('--vol', '70%');
   el.volSlider.addEventListener('input', e => {
     el.volSlider.style.setProperty('--vol', e.target.value + '%');
   });
